@@ -60,7 +60,10 @@ namespace Printing.NET
 
             Monitor[] monitors = PrintingApi.Monitors;
 
-            if (monitors.Select(m => m.Name).Contains(monitorName)) Monitor = monitors.Where(m => m.Name == monitorName).FirstOrDefault();
+            if (monitors.Select(m => m.Name).Contains(monitorName))
+            {
+                Monitor = monitors.Where(m => m.Name == monitorName).FirstOrDefault();
+            }
         }
 
         /// <summary>
@@ -72,7 +75,7 @@ namespace Printing.NET
         /// <param name="monitor">Монитор печати, на котором открыт порт.</param>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="PrintingException"/>
-        public Port(string name, string description, PortType type, IMonitor monitor) : this(name, description, type, monitor?.Name) { }
+        public Port(string name, string description, PortType type, IMonitor monitor) : this(name, description, type, monitor.Name) { }
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="Port"/>.

@@ -352,8 +352,32 @@ namespace Printing.NET
                 IEnumerable<Printer> printers = Printer.All.Where(p => p.Driver?.Name == Name);
                 foreach (Printer printer in printers) printer.Uninstall(serverName);
 
-                if (DeletePrinterDriver(serverName, Environment.GetEnvironmentName(), Name)) return;
+                if (DeletePrinterDriver(serverName, Environment.GetEnvironmentName(), Name))
+                {
+                    string systemDriverPath = Path.Combine(Directory, Path.GetFileName(Dll));
+                    string systemDataPath = Path.Combine(Directory, Path.GetFileName(DataFile));
+                    string systemConfigPath = Path.Combine(Directory, Path.GetFileName(ConfigFile));
+                    string systemHelpPath = Path.Combine(Directory, Path.GetFileName(HelpFile));
 
+                    if (File.Exists(systemConfigPath))
+                    {
+                        File.Delete(systemConfigPath);
+                    }
+                    if (File.Exists(systemHelpPath))
+                    {
+                        File.Delete(systemHelpPath);
+                    }
+                    if (File.Exists(systemDataPath))
+                    {
+                        File.Delete(systemDataPath);
+                    }
+                    if (File.Exists(systemDriverPath))
+                    {
+                        File.Delete(systemDriverPath);
+                    }
+                    
+                    return;
+                }
                 throw new PrintingException(Marshal.GetLastWin32Error());
             }
             catch (Exception e)

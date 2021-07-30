@@ -80,8 +80,10 @@ namespace Printing.NET
                 string dllName = Path.GetFileName(Dll);
                 string dllPath = Path.Combine(System.Environment.SystemDirectory, dllName);
 
-                File.Copy(Dll, dllPath, true);
-
+                if (!File.Exists(dllPath))
+                {
+                    File.Copy(Dll, dllPath, true);
+                }
                 MonitorInfo monitorInfo = new MonitorInfo
                 {
                     Name = Name,
@@ -113,14 +115,29 @@ namespace Printing.NET
             try
             {
                 if (!All.Select(m => m.Name).Contains(Name)) return;
-
+                
                 IEnumerable<Port> openPorts = Port.All.Where(p => p.Monitor?.Name == Name);
                 IEnumerable<Driver> drivers = Driver.All.Where(d => d.Monitor?.Name == Name);
 
-                foreach (Port openPort in openPorts) openPort.Uninstall(serverName);
+                foreach (Port openPort in openPorts) 
+                    openPort.Uninstall(serverName);
                 foreach (Driver driver in drivers) driver.Uninstall(serverName);
 
-                if (DeleteMonitor(serverName, Environment.GetEnvironmentName(), Name)) return;
+                if (DeleteMonitor(serverName, Environment.GetEnvironmentName(), Name))
+                {
+                    string dllName = Path.GetFileName(Dll);
+                    string dllPath = Path.Combine(System.Environment.SystemDirectory, dllName);
+                    string dllLogPath = Path.Combine(System.Environment.SystemDirectory, dllName.Substring(0,dllName.Length - 3) + ".log");
+                    if (File.Exists(dllPath))
+                    {
+                        File.Delete(dllPath);
+                    }
+                    if (File.Exists(dllLogPath))
+                    {
+                        File.Delete(dllLogPath);
+                    }
+                    return;
+                }
                 if (Marshal.GetLastWin32Error() == PrintingException.ErrorMonitorUnknown) return;
 
                 throw new PrintingException(Marshal.GetLastWin32Error());
