@@ -195,6 +195,7 @@ namespace Praktika
             button5.Visible = false;
             var driver = listBox1.SelectedItem;
             printers = Printer.All.Where(item => item.Driver.Name == driver.ToString()).ToArray();
+            listBox2.Items.Clear();
             foreach (var printer in printers)
             {
                 listBox2.Items.Add(printer.Name);
