@@ -26,6 +26,7 @@ namespace Praktika
         protected const string DriverHelpFile = "Printing Tests/pscript.hlp";
 
         private Driver[] drivers;
+        private Printer[] printers;
         public Form1()
         {
             PrintingApi.TryStart();
@@ -78,11 +79,9 @@ namespace Praktika
                 var driver = drivers[index];
                 label1.Text = driver.Name;
                 listBox2.Items.Clear();
-                foreach(var printer in Printer.All.Where(item => item.Driver.Name == driver.Name))
-                {
-                    listBox2.Items.Add(printer.Name);
-                }
+                updatePrinters();
                 button3.Visible = true;
+
             }
             catch (Exception exp)
             {
@@ -134,7 +133,7 @@ namespace Praktika
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var res = MessageBox.Show("Вы уверены, что хотитие удалить этот принтер?", "Внимание", MessageBoxButtons.YesNo);
+            var res = MessageBox.Show("Вы уверены, что хотитие удалить этот драйвер и все принтеры, связанные с ним?", "Внимание", MessageBoxButtons.YesNo);
 
             if (res != DialogResult.Yes)
             {
@@ -154,14 +153,24 @@ namespace Praktika
         }
         private void deleteDriver(Driver driver)
         {
-            PrintingApi.TryRestart();
-            driver.Uninstall(null);
-            PrintingApi.TryRestart();
-            driver.Monitor.Uninstall(null);
+            try
+            {
+                PrintingApi.TryRestart();
+                driver.Uninstall(null);
+                PrintingApi.TryRestart();
+                if (driver.Monitor != null)
+                {
+                    driver.Monitor.Uninstall(null);
+                }
+            }
+            catch (Exception exp)
+            {
+                MessageBox.Show(exp.Message);
+            }
         }
         private void button4_Click(object sender, EventArgs e)
         {
-            var res = MessageBox.Show("Вы уверены, что хотитие удалить все принтеры?", "Внимание",MessageBoxButtons.YesNo);
+            var res = MessageBox.Show("Вы уверены, что хотитие удалить все драйверы принтеров?", "Внимание", MessageBoxButtons.YesNo);
 
             if (res != DialogResult.Yes)
             {
@@ -181,5 +190,34 @@ namespace Praktika
                 MessageBox.Show(exp.Message);
             }
         }
+        private void updatePrinters()
+        {
+            button5.Visible = false;
+            var driver = listBox1.SelectedItem;
+            printers = Printer.All.Where(item => item.Driver.Name == driver.ToString()).ToArray();
+            foreach (var printer in printers)
+            {
+                listBox2.Items.Add(printer.Name);
+            }
+        }
+        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            button5.Visible = true;
+        }
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var res = MessageBox.Show("Вы уверены, что хотитие удалить этот принтер?", "Внимание", MessageBoxButtons.YesNo);
+
+            if (res != DialogResult.Yes)
+            {
+                return;
+            }
+            var index = listBox2.SelectedIndex;
+            var printer = printers[index];
+            PrintingApi.TryRestart();
+            printer.Uninstall();
+            updatePrinters();
+        }
+
     }
 }

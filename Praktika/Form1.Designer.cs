@@ -29,6 +29,7 @@ namespace Praktika
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
@@ -38,6 +39,7 @@ namespace Praktika
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.button5 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBox1
@@ -107,6 +109,7 @@ namespace Praktika
             this.listBox2.Name = "listBox2";
             this.listBox2.Size = new System.Drawing.Size(297, 292);
             this.listBox2.TabIndex = 8;
+            this.listBox2.SelectedIndexChanged += new System.EventHandler(this.listBox2_SelectedIndexChanged);
             // 
             // label2
             // 
@@ -126,11 +129,23 @@ namespace Praktika
             this.label3.TabIndex = 10;
             this.label3.Text = "Список драйверов";
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(673, 428);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(154, 34);
+            this.button5.TabIndex = 11;
+            this.button5.Text = "Удалить принтер";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Visible = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1044, 634);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.listBox2);
@@ -140,6 +155,7 @@ namespace Praktika
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.listBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -158,6 +174,7 @@ namespace Praktika
         private System.Windows.Forms.ListBox listBox2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button button5;
     }
 }
 

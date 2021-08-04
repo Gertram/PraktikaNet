@@ -338,7 +338,14 @@ namespace Printing.NET
                 throw new PrintingException(e.Message, e);
             }
         }
-
+        private void delFile(string name)
+        {
+            var path = Path.Combine(Directory, Path.GetFileName(name));
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
         /// <summary>
         /// Удаляет драйвер удалённо в системе.
         /// </summary>
@@ -352,28 +359,25 @@ namespace Printing.NET
                 IEnumerable<Printer> printers = Printer.All.Where(p => p.Driver?.Name == Name);
                 foreach (Printer printer in printers) printer.Uninstall(serverName);
 
+                PrintingApi.TryRestart();
+
                 if (DeletePrinterDriver(serverName, Environment.GetEnvironmentName(), Name))
                 {
-                    string systemDriverPath = Path.Combine(Directory, Path.GetFileName(Dll));
-                    string systemDataPath = Path.Combine(Directory, Path.GetFileName(DataFile));
-                    string systemConfigPath = Path.Combine(Directory, Path.GetFileName(ConfigFile));
-                    string systemHelpPath = Path.Combine(Directory, Path.GetFileName(HelpFile));
-
-                    if (File.Exists(systemConfigPath))
+                    if (ConfigFile != null)
                     {
-                        File.Delete(systemConfigPath);
+                        delFile(ConfigFile);
                     }
-                    if (File.Exists(systemHelpPath))
+                    if(HelpFile != null)
                     {
-                        File.Delete(systemHelpPath);
+                        delFile(HelpFile);
                     }
-                    if (File.Exists(systemDataPath))
+                    if(DataFile != null)
                     {
-                        File.Delete(systemDataPath);
+                        delFile(DataFile);
                     }
-                    if (File.Exists(systemDriverPath))
+                    if(Dll != null)
                     {
-                        File.Delete(systemDriverPath);
+                        delFile(Dll);
                     }
                     
                     return;
@@ -383,6 +387,10 @@ namespace Printing.NET
             catch (Exception e)
             {
                 throw new PrintingException(e.Message, e);
+            }
+            finally
+            {
+                PrintingApi.TryStart();
             }
         }
 
